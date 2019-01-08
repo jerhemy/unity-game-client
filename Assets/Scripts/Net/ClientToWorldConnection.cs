@@ -1,5 +1,6 @@
 using Common;
 using Common.Net.Core;
+using Net;
 using ReliableNetcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,9 +22,9 @@ namespace Client.Net
             StartClient(token);
         }
         
-        public override void OnClientReceiveMessage(byte[] data, int size)
-        {          
-            
+
+        public override void OnClientReceiveMessage(OP_ClientPacket packet)
+        {
             throw new System.NotImplementedException();
         }
 

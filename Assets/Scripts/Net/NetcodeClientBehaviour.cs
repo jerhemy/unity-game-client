@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Common.Net.Core;
+using Net;
 using NetcodeIO.NET;
 using ReliableNetcode;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace Common
 		private NetcodeClient client;
 	    private ReliableEndpoint endpoint;
 	       
-	    public abstract void OnClientReceiveMessage(byte[] data, int size);
+	    public abstract void OnClientReceiveMessage(OP_ClientPacket packet);
 	    public abstract void OnClientNetworkStatus(NetcodeClientStatus status);
 	    
 	    protected void StartClient(byte[] connectToken)
@@ -63,7 +64,11 @@ namespace Common
 		
 	    private void ReceivePacket(NetcodeClient client, NetcodePacket packet)
 	    {	  
-		    endpoint.ReceiveCallback = OnClientReceiveMessage;
+		    endpoint.ReceiveCallback = (data, size) =>
+		    {
+			    var obj = OP_ClientPacket.Deserialize(packet.PacketBuffer.InternalBuffer);
+			    OnClientReceiveMessage(obj);
+		    };
 		    endpoint.ReceivePacket(packet.PacketBuffer.InternalBuffer, packet.PacketBuffer.Length);
 	    }
 
@@ -102,11 +107,19 @@ namespace Common
 			    UnityNetcode.DestroyClient(client);
 	    }
 
-	    private byte[] GenerateToken(ulong protocolID, string serverKey, string ipAddress, int port)
+	    public byte[] GenerateToken(ulong protocolID, string serverKey, string ipAddress, int port)
 	    {
 		    var sequenceNumber = ulong.Parse(DateTime.Now.ToString("hhmmssffffff"));
-		    var privateKey = Encoding.ASCII.GetBytes(serverKey);
+		    //var privateKey = Encoding.ASCII.GetBytes(serverKey);
 
+			var privateKey = new byte[]
+			{
+				0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
+				0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4,
+				0x43, 0x71, 0xd6, 0x2c, 0xd1, 0x99, 0x27, 0x26,
+				0x6b, 0x3c, 0x60, 0xf4, 0xb7, 0x15, 0xab, 0xa1,
+			};
+	    
 		    var worldIP = new IPEndPoint(IPAddress.Parse(ipAddress), port);	    
 		    IPEndPoint[] addressList = {worldIP}; 
 		    
@@ -115,7 +128,7 @@ namespace Common
 			    privateKey		// byte[32], must be the same as the private key passed to the Server constructor
 		    );
 
-		    const ulong clientID = 0UL;
+		    const ulong clientID = 1UL;
 		    var userData = new byte[256];
 		    
 		    return tokenFactory.GenerateConnectToken(
