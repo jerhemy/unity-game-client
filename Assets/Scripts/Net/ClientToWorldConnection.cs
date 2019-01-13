@@ -1,3 +1,4 @@
+using System;
 using Common;
 using Common.Net.Core;
 using Net;
@@ -9,6 +10,15 @@ namespace Client.Net
 {
     public class ClientToWorldConnection : NetcodeClientBehaviour
     {
+        [SerializeField] private bool IsDead;
+        [SerializeField] private long SelectedCharacter;
+        
+        [Header("World Connection Settings")]
+        [SerializeField] private string worldIP;
+        [SerializeField] private int worldPort;
+        [SerializeField] private string privateKey;
+        [SerializeField] private ulong protocolID = 1UL;
+        
         void Awake()
         {
             // World connection should always be present
@@ -18,13 +28,21 @@ namespace Client.Net
         
         void Start()
         {
-            var token = new byte[2048];
-            StartClient(token);
+            #if UNITY_EDITOR
+                var token = GenerateToken(protocolID, privateKey, worldIP, worldPort);
+            #else
+                var token = new byte[2048];
+                StartClient(token);
+            #endif
         }
         
 
-        public override void OnClientReceiveMessage(OP_ClientPacket packet)
+        public override void OnClientReceiveMessage(byte[] data, int size)
         {
+            byte[] payload = new byte[size];
+
+            Array.Copy(data, payload, size);
+            
             throw new System.NotImplementedException();
         }
 

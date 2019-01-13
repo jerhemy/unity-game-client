@@ -24,7 +24,7 @@ namespace Client.Net
             EventManager.Subscribe("SendUnreliable", SendUnreliable);
         }
 
-        public override void OnClientReceiveMessage(OP_ClientPacket packet)
+        public override void OnClientReceiveMessage(byte[] data, int size)
         {
             throw new System.NotImplementedException();
         }

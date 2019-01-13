@@ -337,7 +337,7 @@ namespace Common.Net.Core
 		{
 			internalClient.OnStateChanged += (state) =>
 			{
-				Debug.Log("State changed to: " + (int)state);
+				//Debug.Log("State changed to: " + (int)state);
 
 				if (state == ClientState.Connected)
 					pushCallback(clientConnected);

@@ -13,18 +13,12 @@ using UnityNetcodeIO;
 
 namespace Common
 {
-	public struct BasePacket
-	{
-		public short type;
-		public byte[] data;	
-	}
-	
     public abstract class NetcodeClientBehaviour : MonoBehaviour
     {
 		private NetcodeClient client;
 	    private ReliableEndpoint endpoint;
 	       
-	    public abstract void OnClientReceiveMessage(OP_ClientPacket packet);
+	    public abstract void OnClientReceiveMessage(byte[] data, int size);
 	    public abstract void OnClientNetworkStatus(NetcodeClientStatus status);
 	    
 	    protected void StartClient(byte[] connectToken)
@@ -66,8 +60,8 @@ namespace Common
 	    {	  
 		    endpoint.ReceiveCallback = (data, size) =>
 		    {
-			    var obj = OP_ClientPacket.Deserialize(packet.PacketBuffer.InternalBuffer);
-			    OnClientReceiveMessage(obj);
+			    
+			    OnClientReceiveMessage(data, size);
 		    };
 		    endpoint.ReceivePacket(packet.PacketBuffer.InternalBuffer, packet.PacketBuffer.Length);
 	    }
@@ -117,7 +111,7 @@ namespace Common
 				0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
 				0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4,
 				0x43, 0x71, 0xd6, 0x2c, 0xd1, 0x99, 0x27, 0x26,
-				0x6b, 0x3c, 0x60, 0xf4, 0xb7, 0x15, 0xab, 0xa1,
+				0x6b, 0x3c, 0x60, 0xf4, 0xb7, 0x15, 0xab, 0xa1
 			};
 	    
 		    var worldIP = new IPEndPoint(IPAddress.Parse(ipAddress), port);	    
@@ -131,6 +125,7 @@ namespace Common
 		    const ulong clientID = 1UL;
 		    var userData = new byte[256];
 		    
+		    // ClientID will be AccountID as only clients will be connecting to the World Server
 		    return tokenFactory.GenerateConnectToken(
 			    addressList,		// IPEndPoint[] list of addresses the client can connect to. Must have at least one and no more than 32.
 			    30,		// in how many seconds will the token expire
