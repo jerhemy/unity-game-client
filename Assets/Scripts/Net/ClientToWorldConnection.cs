@@ -28,12 +28,8 @@ namespace Client.Net
         
         void Start()
         {
-            #if UNITY_EDITOR
                 var token = GenerateToken(protocolID, privateKey, worldIP, worldPort);
-            #else
-                var token = new byte[2048];
                 StartClient(token);
-            #endif
         }
         
 
@@ -43,12 +39,12 @@ namespace Client.Net
 
             Array.Copy(data, payload, size);
             
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public override void OnClientNetworkStatus(NetcodeClientStatus status)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         

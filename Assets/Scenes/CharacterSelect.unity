@@ -971,10 +971,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsDead: 0
   SelectedCharacter: 0
-  worldIP: 
-  worldPort: 0
-  privateKey: 
-  protocolID: 0
+  worldIP: 127.0.0.1
+  worldPort: 4000
+  privateKey: abcdefghijklmnop
+  protocolID: 1
 --- !u!4 &1922596706
 Transform:
   m_ObjectHideFlags: 0

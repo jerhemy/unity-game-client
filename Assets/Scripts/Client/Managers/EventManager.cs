@@ -46,7 +46,8 @@ public class EventManager : MonoBehaviour
 
     public static void Subscribe(string eventName, Action<BasePacket> listener)
     {
-        if (instance.eventDictionary.TryGetValue(eventName, out var thisEvent))
+        Action<BasePacket> thisEvent;
+        if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             //Add more event to the existing one
             thisEvent += listener;
@@ -65,7 +66,8 @@ public class EventManager : MonoBehaviour
     public static void Unsubscribe(string eventName, Action<BasePacket> listener)
     {
         if (eventManager == null) return;
-        if (instance.eventDictionary.TryGetValue(eventName, out var thisEvent))
+        Action<BasePacket> thisEvent;
+        if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             //Remove event from the existing one
             thisEvent -= listener;
@@ -77,7 +79,8 @@ public class EventManager : MonoBehaviour
 
     public static void Publish(string eventName, BasePacket eventParam)
     {
-        if (instance.eventDictionary.TryGetValue(eventName, out var thisEvent))
+        Action<BasePacket> thisEvent;
+        if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent.Invoke(eventParam);
             // OR USE  instance.eventDictionary[eventName](eventParam);
