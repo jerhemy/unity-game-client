@@ -24,11 +24,15 @@ namespace Client.Net
                 EventManager.Subscribe("SendReliable", SendReliable);
                 EventManager.Subscribe("SendUnreliable", SendUnreliable);
             }
+            else
+            {
+                Debug.Log($"No connectToken set");
+            }
         }
 
         public override void OnClientReceiveMessage(byte[] data, int size)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public override void OnClientNetworkStatus(NetcodeClientStatus status)
