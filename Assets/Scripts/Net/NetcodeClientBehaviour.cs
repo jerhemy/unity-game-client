@@ -41,7 +41,7 @@ namespace Common
 						    StartCoroutine(StatusUpdate());
 					    }, (err) =>
 					    {
-
+							Debug.Log($"[{DateTime.Now}] [Client] {err}");
 					    });
 				    });
 			    }
