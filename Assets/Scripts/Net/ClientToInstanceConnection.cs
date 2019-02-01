@@ -20,8 +20,8 @@ namespace Client.Net
         {
             var token = GenerateToken(protocolID, privateKey, "127.0.0.1", 4000);
             StartClient(token);
-            EventManager.Subscribe("SendReliable", SendReliable);
-            EventManager.Subscribe("SendUnreliable", SendUnreliable);
+            //EventManager.Subscribe("SendReliable", SendReliable);
+            //EventManager.Subscribe("SendUnreliable", SendUnreliable);
         }
 
         public override void OnClientReceiveMessage(byte[] data, int size)

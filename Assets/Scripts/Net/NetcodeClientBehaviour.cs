@@ -103,10 +103,11 @@ namespace Common
 
 	    public byte[] GenerateToken(ulong protocolID, string serverKey, string ipAddress, int port)
 	    {
-		    var sequenceNumber = ulong.Parse(DateTime.Now.ToString("hhmmssffffff"));
+		    ulong sequenceNumber = ulong.Parse(DateTime.Now.ToString("hhmmssffffff"));
 		    Debug.Log($"Sequence #: {sequenceNumber}");
 		    var pkey = serverKey.Substring(0, 16);
-		    var privateKey = Encoding.ASCII.GetBytes(pkey);
+		    byte[] privateKey = Encoding.ASCII.GetBytes(pkey);
+		    Debug.Log($"PrivateKey Length: {privateKey.Length}");
 		    
 //			var privateKey = new byte[]
 //			{
@@ -132,8 +133,8 @@ namespace Common
 			    addressList,		// IPEndPoint[] list of addresses the client can connect to. Must have at least one and no more than 32.
 			    30,		// in how many seconds will the token expire
 			    30,		// how long it takes until a connection attempt times out and the client tries the next server.
-			    sequenceNumber,		// ulong token sequence number used to uniquely identify a connect token.
-			    clientID,		// ulong ID used to uniquely identify this client
+			    1UL,		// ulong token sequence number used to uniquely identify a connect token.
+			    1UL,		// ulong ID used to uniquely identify this client
 			    userData		// byte[], up to 256 bytes of arbitrary user data (available to the server as RemoteClient.UserData)
 		    );
 
