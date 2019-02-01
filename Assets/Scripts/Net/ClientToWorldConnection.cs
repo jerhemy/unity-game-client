@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Common;
 using Common.Net.Core;
 using Net;
@@ -14,10 +15,7 @@ namespace Client.Net
         [SerializeField] private long SelectedCharacter;
         
         [Header("World Connection Settings")]
-        [SerializeField] private string worldIP;
-        [SerializeField] private int worldPort;
-        [SerializeField] private string privateKey;
-        [SerializeField] private ulong protocolID = 1UL;
+        [SerializeField] private string connectToken;
         
         void Awake()
         {
@@ -28,8 +26,8 @@ namespace Client.Net
         
         void Start()
         {
-                var token = GenerateToken(protocolID, privateKey, worldIP, worldPort);
-                StartClient(token);
+            var token = Encoding.ASCII.GetBytes(connectToken);
+            StartClient(token);
         }
         
 

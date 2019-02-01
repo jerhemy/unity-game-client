@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Common;
 using Common.Net.Core;
 using Net;
@@ -12,21 +13,26 @@ namespace Client.Net
         public NetcodeClientStatus clientStatus; 
         
         [SerializeField]
-        private string privateKey;
-        [SerializeField]
-        private ulong protocolID;
+        private string connectToken;
         
         void Start()
         {
-            var token = GenerateToken(protocolID, privateKey, "127.0.0.1", 4000);
-            StartClient(token);
-            //EventManager.Subscribe("SendReliable", SendReliable);
-            //EventManager.Subscribe("SendUnreliable", SendUnreliable);
+            if (!string.IsNullOrWhiteSpace(connectToken))
+            {
+                var token = Convert.FromBase64String(connectToken);
+                StartClient(token);
+                EventManager.Subscribe("SendReliable", SendReliable);
+                EventManager.Subscribe("SendUnreliable", SendUnreliable);
+            }
+            else
+            {
+                Debug.Log($"No connectToken set");
+            }
         }
 
         public override void OnClientReceiveMessage(byte[] data, int size)
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public override void OnClientNetworkStatus(NetcodeClientStatus status)
