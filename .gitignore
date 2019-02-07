@@ -5,7 +5,7 @@
 [Bb]uilds/
 [Ll]ogs/
 [Aa]ssets/AssetStoreTools*
-Assets/Plugins/Editor*
+
 
 # Rider cache directory
 .idea/
