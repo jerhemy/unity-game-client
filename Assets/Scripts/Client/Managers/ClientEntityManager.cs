@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Entities;
 using Net;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
@@ -11,7 +10,7 @@ using Vector3 = UnityEngine.Vector3;
 /// <summary>
 /// Manages all entities in the scene
 /// </summary>
-public class EntityManager : MonoBehaviour
+public class ClientEntityManager : MonoBehaviour
 {
     /// <summary>
     /// Collection holds all NPC entities in scene
@@ -25,7 +24,7 @@ public class EntityManager : MonoBehaviour
 
     private List<GameObject> objectPool;
     
-    public static EntityManager instance;
+    public static ClientEntityManager instance;
 
     
     void Awake()
