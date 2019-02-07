@@ -40,6 +40,16 @@ namespace Client.Net
             //throw new System.NotImplementedException();
         }
 
+        public override void OnClientConnect()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public override void OnClientDisconnect(byte[] data, int size)
+        {
+            //throw new NotImplementedException();
+        }
+
         public override void OnClientNetworkStatus(NetcodeClientStatus status)
         {
             //throw new System.NotImplementedException();

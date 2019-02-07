@@ -1,6 +1,7 @@
 using Common;
 using UnityEngine;
 using Client.Net;
+using Net;
 
 namespace Client.Entity
 {
@@ -14,7 +15,7 @@ namespace Client.Entity
             EventManager.Subscribe("HP_UPDATE", SendReliable);   
         }
 
-        private void SendReliable(BasePacket packet)
+        private void SendReliable(NetworkPacket packet)
 
         {
             

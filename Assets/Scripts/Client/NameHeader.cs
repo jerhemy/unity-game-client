@@ -4,7 +4,7 @@ using TMPro;
 
 public class NameHeader : MonoBehaviour {
  
-    public string name;
+    public string headerName;
     public Camera cam;
     TextMesh texto;
  
@@ -12,12 +12,12 @@ public class NameHeader : MonoBehaviour {
     void Start () {
         cam = Camera.main;
         texto = GetComponentInChildren<TextMesh>();
-        texto.text = "<"+name+">";
+        texto.text = "<"+headerName+">";
     }
  
 // Update is called once per frame
     void Update () {
-        if (cam != null) {
+        if (cam) {
             transform.LookAt (cam.transform);
         }else
         {

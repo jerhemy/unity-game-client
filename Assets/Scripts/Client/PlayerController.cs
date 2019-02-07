@@ -3,10 +3,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-
-	
 	public GameObject ConnectionManager;
 	private CharacterController controller;
 	
@@ -89,7 +88,8 @@ public class PlayerController : MonoBehaviour
 			
 			moveDirection.y -= gravity * Time.deltaTime;
 			controller.Move(moveDirection * Time.deltaTime);
-
+			
+			
 			if (Input.GetMouseButtonDown(1))
 			{
 				float mouseInput = Input.GetAxis("Mouse X");
@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
 			{
 				//Debug.Log($"X:{transform.position.x} Y:{transform.position.y} Z:{transform.position.z}");
 				//var position = new Position(controller.transform.position);
-				EventManager.Publish("SendUnreliable", new BasePacket());
+				//EventManager.Publish("SendUnreliable", new BasePacket());
 				//_connectionManager.Send(position, MessageType.Movement);
 			}
 		}

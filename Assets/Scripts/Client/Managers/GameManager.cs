@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Client.Net;
+using Net;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -14,7 +15,7 @@ namespace Client.Managers
             EventManager.Subscribe("OP_ZoneChange", ZoneChange);
         }
 
-        private void ZoneChange(BasePacket e)
+        private void ZoneChange(NetworkPacket e)
         {
             
         }

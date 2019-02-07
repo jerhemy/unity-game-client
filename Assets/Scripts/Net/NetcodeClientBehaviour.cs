@@ -19,37 +19,41 @@ namespace Common
 	    private ReliableEndpoint endpoint;
 	       
 	    public abstract void OnClientReceiveMessage(byte[] data, int size);
+	    public abstract void OnClientConnect();
+	    public abstract void OnClientDisconnect(byte[] data, int size);
+	    
 	    public abstract void OnClientNetworkStatus(NetcodeClientStatus status);
 	    
 	    protected void StartClient(byte[] connectToken)
 	    {
-		    UnityNetcode.QuerySupport((supportStatus) =>
+		    UnityNetcode.QuerySupport(supportStatus =>
 		    {
-			    if (supportStatus == NetcodeIOSupportStatus.Available)
+			    if (NetcodeIOSupportStatus.Available == supportStatus)
 			    {
-				    UnityNetcode.CreateClient(NetcodeIOClientProtocol.IPv4, (client) =>
+				    UnityNetcode.CreateClient(NetcodeIOClientProtocol.IPv4, client =>
 				    {
 					    this.client = client;
 					    endpoint = new ReliableEndpoint();
 					    
 					    client.Connect(connectToken, () =>
 					    {
+						    OnClientConnect();
 						    // add listener for network messages
 						    client.AddPayloadListener(ReceivePacket);
 
 						    // do stuff
 						    StartCoroutine(StatusUpdate());
-					    }, (err) =>
+					    }, err =>
 					    {
 							Debug.Log($"[{DateTime.Now}] [Client] {err}");
 					    });
 				    });
 			    }
-			    else if (supportStatus == NetcodeIOSupportStatus.Unavailable)
+			    else if (NetcodeIOSupportStatus.Unavailable == supportStatus)
 			    {
 				    //logLine("Netcode.IO not available");
 			    }
-			    else if (supportStatus == NetcodeIOSupportStatus.HelperNotInstalled)
+			    else if (NetcodeIOSupportStatus.HelperNotInstalled == supportStatus)
 			    {
 				    //logLine("Netcode.IO is available, but native helper is not installed");
 			    }
@@ -108,14 +112,6 @@ namespace Common
 		    var pkey = serverKey.Substring(0, 16);
 		    byte[] privateKey = Encoding.ASCII.GetBytes(pkey);
 		    Debug.Log($"PrivateKey Length: {privateKey.Length}");
-		    
-//			var privateKey = new byte[]
-//			{
-//				0x60, 0x6a, 0xbe, 0x6e, 0xc9, 0x19, 0x10, 0xea,
-//				0x9a, 0x65, 0x62, 0xf6, 0x6f, 0x2b, 0x30, 0xe4,
-//				0x43, 0x71, 0xd6, 0x2c, 0xd1, 0x99, 0x27, 0x26,
-//				0x6b, 0x3c, 0x60, 0xf4, 0xb7, 0x15, 0xab, 0xa1
-//			};
 	    
 		    var worldIP = new IPEndPoint(IPAddress.Parse(ipAddress), port);	    
 		    IPEndPoint[] addressList = {worldIP}; 

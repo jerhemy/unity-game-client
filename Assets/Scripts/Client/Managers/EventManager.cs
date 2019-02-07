@@ -2,51 +2,48 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Client.Net;
+using Net;
 using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
-    private Dictionary<string, Action<BasePacket>> eventDictionary;
+    private Dictionary<string, Action<NetworkPacket>> eventDictionary;
     
     private static EventManager eventManager;
 
-    public static EventManager instance
-    {
-        get
-        {
-            if (!eventManager)
-            {
-                eventManager = FindObjectOfType(typeof(EventManager)) as EventManager;
-
-                if (!eventManager)
-                {
-                    Debug.LogError("There needs to be one active EventManger script on a GameObject in your scene.");
-                }
-                else
-                {
-                    eventManager.Init();
-                }
-            }
-            return eventManager;
-        }
-    }
+    public static EventManager instance;
 
     void Awake()
     {
-        DontDestroyOnLoad(this);
+        
+        //Check if instance already exists
+        if (instance == null)
+        {
+            //if not, set instance to this
+            instance = this;
+
+        }
+        //If instance already exists and it's not this:
+        else if (instance != this)
+                
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+            Destroy(gameObject);    
+            
+        //Sets this to not be destroyed when reloading scene
+        DontDestroyOnLoad(gameObject);             
     }
     
     void Init()
     {
         if (eventDictionary == null)
         {
-            eventDictionary = new Dictionary<string, Action<BasePacket>>();
+            eventDictionary = new Dictionary<string, Action<NetworkPacket>>();
         }
     }
 
-    public static void Subscribe(string eventName, Action<BasePacket> listener)
+    public static void Subscribe(string eventName, Action<NetworkPacket> listener)
     {
-        Action<BasePacket> thisEvent;
+        Action<NetworkPacket> thisEvent;
         if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             //Add more event to the existing one
@@ -63,10 +60,10 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void Unsubscribe(string eventName, Action<BasePacket> listener)
+    public static void Unsubscribe(string eventName, Action<NetworkPacket> listener)
     {
         if (eventManager == null) return;
-        Action<BasePacket> thisEvent;
+        Action<NetworkPacket> thisEvent;
         if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             //Remove event from the existing one
@@ -77,9 +74,9 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void Publish(string eventName, BasePacket eventParam)
+    public static void Publish(string eventName, NetworkPacket eventParam)
     {
-        Action<BasePacket> thisEvent;
+        Action<NetworkPacket> thisEvent;
         if (instance.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent.Invoke(eventParam);
