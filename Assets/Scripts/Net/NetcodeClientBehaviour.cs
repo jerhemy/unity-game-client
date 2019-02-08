@@ -68,7 +68,10 @@ namespace Common
 	    private void ReceivePacket(NetcodeClient client, NetcodePacket packet)
 	    {	  
 		    endpoint.ReceiveCallback = (data, size) =>
-		    {			    
+		    {		
+			    #if UNITY_EDITOR
+			    Debug.Log($"[{DateTime.Now}] [Client] Received Server Message: {(OP)BitConverter.ToInt32(data, 0)}");
+			    #endif
 			    OnClientReceiveMessage(data, size);
 		    };
 		    endpoint.ReceivePacket(packet.PacketBuffer.InternalBuffer, packet.PacketBuffer.Length);

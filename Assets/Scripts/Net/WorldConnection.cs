@@ -54,7 +54,7 @@ namespace Client.Net
 		{
 			logLine("Obtaining connect token...");
 			UnityWebRequest webRequest = UnityWebRequest.Get(TokenServer);
-			yield return webRequest.Send();
+			yield return webRequest.SendWebRequest();
 
 			if (webRequest.isNetworkError)
 			{

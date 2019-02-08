@@ -39,7 +39,7 @@ namespace Client.Net
             // After Auth -> Load Character
             // After Load Character -> 
             //throw new System.NotImplementedException();
-            var packet = new NetworkPacket(data); 
+            var packet = new NetworkPacket(data);
             Debug.Log($"[{DateTime.Now}] [Client] Received Server Message: {packet.type}");
         
             //EventManager.Publish(packet.type, packet);
