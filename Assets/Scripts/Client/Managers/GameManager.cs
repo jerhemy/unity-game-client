@@ -12,7 +12,7 @@ namespace Client.Managers
         
         void Start()
         {
-            EventManager.Subscribe("OP_ZoneChange", ZoneChange);
+
         }
 
         private void ZoneChange(NetworkPacket e)
@@ -38,7 +38,8 @@ namespace Client.Managers
         
         void OnDestroy()
         {
-            EventManager.Unsubscribe("", ZoneChange);    
+
+            
         }
     }
 }

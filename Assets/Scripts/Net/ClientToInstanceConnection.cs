@@ -13,7 +13,7 @@ namespace Client.Net
     public class ClientToInstanceConnection : NetcodeClientBehaviour
     {
         public NetcodeClientStatus clientStatus; 
-        private EventManager _eventManager = EventManager.instance;
+        private ClientEntityManager _entityManager = ClientEntityManager.instance;
         
         [SerializeField]
         private string connectToken;
@@ -25,8 +25,6 @@ namespace Client.Net
             {
                 var token = Convert.FromBase64String(connectToken);
                 StartClient(token);
-                EventManager.Subscribe("SendReliable", SendReliable);
-                EventManager.Subscribe("SendUnreliable", SendUnreliable);
             }
             else
             {
@@ -36,16 +34,21 @@ namespace Client.Net
 
         public override void OnClientReceiveMessage(byte[] data, int size)
         {
+            
             // After Login -> Auth
             // After Auth -> Load Character
             // After Load Character -> 
             //throw new System.NotImplementedException();
+            var packet = new NetworkPacket(data); 
+            Debug.Log($"[{DateTime.Now}] [Client] Received Server Message: {packet.type}");
+        
+            //EventManager.Publish(packet.type, packet);
         }
 
         public override void OnClientConnect()
         {
             // Connected -> Send Auth Request
-            var op = SendOPCode(OP.CLIENT_CONNECT);
+            var op = new NetworkPacket(OP.ClientConnect);
             SendReliable(op);
         }
 
@@ -69,28 +72,14 @@ namespace Client.Net
         /// </summary>
         public void SendReliable(NetworkPacket packet)
         {
-            base.Send(packet._data, packet._length, QosType.Reliable);
+            Debug.Log($"[{DateTime.Now}] [Client] Client Message: {packet.type}");
+            base.Send(packet.data, packet.length, QosType.Reliable);
         }
         
         public void SendUnreliable(NetworkPacket packet)
         {
-            base.Send(packet._data, packet._length, QosType.Unreliable);
-        }
-
-        
-        private void OnDestroy()
-        {
-            base.OnDestroy();
-        }
-
-        private NetworkPacket SendOPCode(OP code)
-        {
-            using(MemoryStream ms = new MemoryStream())
-            using (BinaryWriter writer = new BinaryWriter(ms))
-            {
-                writer.Write((short)code);            
-                return new NetworkPacket(ms.ToArray());
-            }
+            Debug.Log($"[{DateTime.Now}] [Client] Client Message: {packet.type}");
+            base.Send(packet.data, packet.length, QosType.Unreliable);
         }
     }
 }

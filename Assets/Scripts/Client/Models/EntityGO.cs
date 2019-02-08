@@ -1,7 +1,7 @@
 ﻿using System;
+using Client.Entity;
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EntityGO : MonoBehaviour
 {
@@ -10,7 +10,7 @@ public class EntityGO : MonoBehaviour
     [SerializeField]
     private long id;
   
-    private EntityManager entityManager = EntityManager.instance;
+    private ClientEntityManager entityManager = ClientEntityManager.instance;
     
     [CanBeNull] private Entity _entity;
 

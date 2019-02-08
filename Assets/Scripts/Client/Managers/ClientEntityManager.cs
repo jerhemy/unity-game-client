@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Client.Entity;
 using Net;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
@@ -13,23 +14,27 @@ using Vector3 = UnityEngine.Vector3;
 public class ClientEntityManager : MonoBehaviour
 {
     /// <summary>
-    /// Collection holds all NPC entities in scene
+    /// Holds client entity
+    /// </summary>
+    private PlayerEntity _playerEntity;
+    private GameObject _playerGameObject;
+    
+    
+    /// <summary>
+    /// Collection holds all entities in scene
     /// </summary>
     private ConcurrentDictionary<long, EntityGO> _entity;
-        
+    
     public GameObject activeContainer;
 
     [SerializeField]
     private int objectPoolSize = 2000;
-
     private List<GameObject> objectPool;
     
     public static ClientEntityManager instance;
-
     
     void Awake()
     {
-        
         //Check if instance already exists
         if (instance == null)
         {
@@ -50,6 +55,7 @@ public class ClientEntityManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {      
+        EventManager.Subscribe(OP.ServerAddEntity, AddEntity);
         if (_entity == null)
         {
             _entity = new ConcurrentDictionary<long, EntityGO>();
@@ -73,11 +79,6 @@ public class ClientEntityManager : MonoBehaviour
             
             objectPool.Add(newGO);
         }
-        
-        //StartCoroutine(Process());
-        //EventManager.Subscribe("CreatePlayer", CreatePlayer);
-        //EventManager.Subscribe("UpdatePlayer", CreatePlayer);
-        //EventManager.Subscribe("RemovePlayer", CreatePlayer);
     }
     
     private IEnumerator Process()
@@ -98,76 +99,44 @@ public class ClientEntityManager : MonoBehaviour
 
     }
 
-    
-    public void LoadEntities(IEnumerable<Mob> mobs)
-    {
-
-    }
-    
-    /// <summary>
-    /// Spawn all entities that can be spawned at server startup
-    /// </summary>
-    /// <param name="entities"></param>
-    /// <typeparam name="T"></typeparam>
-    private void SpawnEntities<T>(IEnumerable<T> entities)
-    {
-        foreach (var entity in entities)
-        {
-            //SpawnEntity();
-        }
-    }
-    public void AddEntity(IEnumerable<Entity> entity)
-    {
-        // On creation we use the Mob object as this is the initial state
-        // For Updates we use the GameObject as that will maintain current state
-        foreach (var e in entity)
-        {
-            // Find available object from pool
-            var go = GetFreeObject();
-            
-            var id = GetID();
-            go.SetID(id);
-            go.AddEntity(e);
-
-            _entity.TryAdd(id, go);
-            
-            go.Spawn();
-        }
-    }
-
     private long GetID()
     {
         return DateTime.UtcNow.Ticks;
     }
+
     
-    public void CreatePlayer(long id, ClientPlayer client)
-    {   
+    public void AddEntity(NetworkPacket packet)
+    {
+        // On creation we use the Mob object as this is the initial state
+        // For Updates we use the GameObject as that will maintain current state
         
+        // Find available object from pool
         var go = GetFreeObject();
-        go.AddEntity(client);
+        
+        var id = GetID();
+        go.SetID(id);
+        //go.AddEntity(e);
 
         _entity.TryAdd(id, go);
-            
-        go.Spawn();
-    }
-    
-    public void RemovePlayer(INetworkPacket packet)
-    {
-        // Load Player Details from Persistant Storage
-        //_entity.TryRemove(packet.clientId, out _);  
         
-        // Send Packet that user is finished loading
-        //EventManager.Publish("");
-    }
-    
-    public void UpdatePlayer(INetworkPacket packet)
-    {
-        // Load Player Details from Persistant Storage
-            
-        // Send Packet that user is finished loading
-        //EventManager.Publish("");
+        go.Spawn();       
     }
 
+
+    public void SetPlayerID(long id)
+    {
+        
+    }
+    
+    public void CreatePlayer(long id, PlayerEntity client)
+    {   
+        _playerGameObject = new GameObject("Player");
+        var entityGO = _playerGameObject.AddComponent<EntityGO>();
+        entityGO.AddEntity(client);
+        
+        entityGO.Spawn();
+    }
+    
     private EntityGO GetFreeObject()
     {
         var go = objectPool.FirstOrDefault(g => g.gameObject.activeInHierarchy == false);

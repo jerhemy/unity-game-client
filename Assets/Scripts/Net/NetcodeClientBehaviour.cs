@@ -18,6 +18,11 @@ namespace Common
 		private NetcodeClient client;
 	    private ReliableEndpoint endpoint;
 	       
+	    protected long GetID()
+	    {
+		    return DateTime.UtcNow.Ticks;
+	    }
+	    
 	    public abstract void OnClientReceiveMessage(byte[] data, int size);
 	    public abstract void OnClientConnect();
 	    public abstract void OnClientDisconnect(byte[] data, int size);
@@ -63,8 +68,7 @@ namespace Common
 	    private void ReceivePacket(NetcodeClient client, NetcodePacket packet)
 	    {	  
 		    endpoint.ReceiveCallback = (data, size) =>
-		    {
-			    
+		    {			    
 			    OnClientReceiveMessage(data, size);
 		    };
 		    endpoint.ReceivePacket(packet.PacketBuffer.InternalBuffer, packet.PacketBuffer.Length);

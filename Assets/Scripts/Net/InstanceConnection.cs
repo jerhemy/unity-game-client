@@ -46,11 +46,6 @@ namespace Client.Net
 				}
 			});
 		}
-
-		void SendDataListener(EventParam data)
-		{
-			
-		}
 		
 		IEnumerator connectToServer()
 		{

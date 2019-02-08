@@ -1,14 +1,7 @@
 namespace Client.Models
 {
     public class Player
-    {
-
-        public int GetAC()
-        {
-            
-        }
-
-        
+    {        
         protected int AC;
         
         protected int ATK;

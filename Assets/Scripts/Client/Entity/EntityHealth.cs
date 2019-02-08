@@ -12,7 +12,7 @@ namespace Client.Entity
         
         void Start()
         {
-            EventManager.Subscribe("HP_UPDATE", SendReliable);   
+
         }
 
         private void SendReliable(NetworkPacket packet)

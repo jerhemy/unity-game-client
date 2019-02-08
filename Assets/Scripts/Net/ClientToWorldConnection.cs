@@ -62,10 +62,5 @@ namespace Client.Net
                 Destroy(gameObject);
             }
         }
-
-        private void OnDestroy()
-        {
-            base.OnDestroy();
-        }
     }
 }
