@@ -34,12 +34,10 @@ namespace Client.Net
 
         public override void OnClientReceiveMessage(byte[] data, int size)
         {
-            
             // After Login -> Auth
             // After Auth -> Load Character
             // After Load Character -> 
-            //throw new System.NotImplementedException();
-            var packet = new NetworkPacket(data);
+            var packet = NetworkPacket.Decode(data);
             Debug.Log($"[{DateTime.Now}] [Client] Received Server Message: {packet.type}");
         
             //EventManager.Publish(packet.type, packet);
@@ -47,9 +45,11 @@ namespace Client.Net
 
         public override void OnClientConnect()
         {
-            // Connected -> Send Auth Request
+            // Request Zone
+            
+            // Request Character
             var op = new NetworkPacket(OP.ClientConnect);
-            SendReliable(op);
+            SendPacket(op);
         }
 
         public override void OnClientDisconnect(byte[] data, int size)
@@ -62,24 +62,26 @@ namespace Client.Net
             if (status == clientStatus) return;
             Debug.Log($"{DateTime.Now} [Client] Connection Status: {clientStatus}->{status}");
             clientStatus = status;
-            
 
-            //throw new System.NotImplementedException();
+            if (NetcodeClientStatus.Disconnected == status)
+            {
+                Debug.Log("I'VE BEEN DISCONNECTED");
+            }
         }
 
         /// <summary>
         /// Sends data to the Game Server
         /// </summary>
-        public void SendReliable(NetworkPacket packet)
+        public void SendPacket(NetworkPacket packet)
         {
             Debug.Log($"[{DateTime.Now}] [Client] Client Message: {packet.type}");
-            base.Send(packet.data, packet.length, QosType.Reliable);
+            base.Send(packet.data, packet.Size, packet.qosType);
         }
         
         public void SendUnreliable(NetworkPacket packet)
         {
             Debug.Log($"[{DateTime.Now}] [Client] Client Message: {packet.type}");
-            base.Send(packet.data, packet.length, QosType.Unreliable);
+            base.Send(packet.data, packet.Size, QosType.Unreliable);
         }
     }
 }

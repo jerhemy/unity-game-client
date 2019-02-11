@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 {
 	public GameObject ConnectionManager;
 	private CharacterController controller;
+	private Camera _camera;
 	
 	public float speed = 6.0F;
 	public float jumpSpeed = 8.0F;
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
 	void Awake()
 	{
 		controller = GetComponent<CharacterController>();
+		_camera = Camera.main;
 	}
 
 	private Vector3 oldVal;
@@ -39,10 +41,9 @@ public class PlayerController : MonoBehaviour
 		
 		if( Input.GetMouseButtonDown(0) )
 		{
-			Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
-			RaycastHit hit;
-         
-			if( Physics.Raycast( ray, out hit, 100 ) )
+			Ray ray = _camera.ScreenPointToRay( Input.mousePosition );
+
+			if( Physics.Raycast( ray, out var hit, 100 ) )
 			{
 				Debug.Log( hit.transform.gameObject.name );
 			}

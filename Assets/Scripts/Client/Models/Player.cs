@@ -1,6 +1,8 @@
+using Net;
+
 namespace Client.Models
 {
-    public class Player
+    public class Player : Entity, INetworkPacket
     {        
         protected int AC;
         
@@ -65,6 +67,10 @@ namespace Client.Models
         /// Poison Resist
         /// </summary>
         protected int PR;
-             
+
+        public byte[] Serialize()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

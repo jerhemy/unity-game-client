@@ -80,8 +80,7 @@ namespace Common
 	    /// <summary>
 	    /// Sends data to the Game Server
 	    /// </summary>
-	    
-	    public void Send(byte[] payload, int size, QosType type)
+	    protected void Send(byte[] payload, int size, QosType type)
 	    {
 		    endpoint.TransmitCallback = ( data, length ) =>
 		    {
@@ -90,7 +89,7 @@ namespace Common
 
 		    endpoint.SendMessage(payload, size, type);
 	    }
-
+	    
 		IEnumerator StatusUpdate()
 		{
 			while (true)

@@ -1,80 +1,113 @@
 using System;
 using System.IO;
+using ReliableNetcode;
 
 namespace Net
 {
     public struct NetworkPacket
     {
-        private OP _type;
+        private const int typeSize = sizeof(OP);
+        private readonly OP _type;
         private readonly byte[] _data;
-        private readonly int _length;
-
+        private readonly int _size;
+        private QosType _qosType;
+        
         public NetworkPacket(OP type, byte[] data)
         {
             _type = type;
-            _length = data.Length;
-            byte[] bType = BitConverter.GetBytes((int) type);
-            _data = new byte[_length + 4];
             
-            Buffer.BlockCopy(bType, 0, _data, 0, 4 );     
-            Buffer.BlockCopy(data, 0, _data, 2, _length );           
-        }
-
-        public NetworkPacket(byte[] data)
-        {
-            _type = (OP)BitConverter.ToInt32(data, 0);
-            _length = data.Length - 4;
-            _data = new byte[_length];
-            Buffer.BlockCopy(data, 4, _data, 0, _length );           
+            var t = (int) _type;
+            
+            if (t <= 4000)
+            {
+                _qosType = QosType.Reliable;
+            }
+            else
+            {
+                _qosType = t <= 8000 ? QosType.UnreliableOrdered : QosType.Unreliable;
+            }
+            
+            _size = data.Length;
+            var bType = BitConverter.GetBytes((int) type);
+            _data = new byte[_size + typeSize];
+            
+            Buffer.BlockCopy(bType, 0, _data, 0, typeSize );     
+            Buffer.BlockCopy(data, 0, _data, 2, _size );           
         }
         
         public NetworkPacket(OP type)
         {
             _type = type;
-            byte[] bType = BitConverter.GetBytes((int) type);
+            
+            var t = (int) _type;
+            
+            if (t <= 4000)
+            {
+                _qosType = QosType.Reliable;
+            }
+            else
+            {
+                _qosType = t <= 8000 ? QosType.UnreliableOrdered : QosType.Unreliable;
+            }
+
+            var bType = BitConverter.GetBytes((int) type);
             var typeLength = sizeof(OP);
-            _length = typeLength;
-            _data = new byte[_length];
-            Buffer.BlockCopy(bType, 0, _data, 0, typeLength );           
+            _size = typeSize;
+            _data = new byte[_size];
+            Buffer.BlockCopy(bType, 0, _data, 0, _size );           
+        }
+        
+        public NetworkPacket(INetworkPacket obj)
+        {
+            _type = OP.ClientConnect;
+
+            var t = (int) _type;
+            
+            if (t <= 4000)
+            {
+                _qosType = QosType.Reliable;
+            }
+            else
+            {
+                _qosType = t <= 8000 ? QosType.UnreliableOrdered : QosType.Unreliable;
+            }
+            
+            _data = obj.Serialize();
+            _size = _data.Length;
+        }
+
+
+        
+        public static NetworkPacket Decode(byte[] data)
+        {
+            var type = (OP)BitConverter.ToInt32(data, 0);
+            var length = data.Length - 4;
+            var payload = new byte[length];       
+            Buffer.BlockCopy(data, 4, payload, 0, length );  
+            
+            return new NetworkPacket(type, payload);
         }
 
         public OP type => _type;
         
-        public int length => _length;
+        public int Size => _size;
 
         public byte[] data => _data;
-    }
 
-    
-    public struct OP_Login
-    {
-        public short type;
-        
-        public byte[] GetBytes()
+        public QosType qosType
         {
-            using(MemoryStream ms = new MemoryStream())
-            using (BinaryWriter writer = new BinaryWriter(ms))
+            get
             {
-                writer.Write(type);            
-                return ms.ToArray();
-            }
-        }
-
-        public static OP_Login Deserialize(byte[] data)
-        {
-            using(MemoryStream ms = new MemoryStream())
-            using (BinaryReader reader = new BinaryReader(ms))
-            {
-                var obj = new OP_Login
+                var t = (int) _type;
+                if (t <= 4000)
                 {
-                    type = reader.ReadInt16()
-                };
-                
-                return obj;
+                    return QosType.Reliable;
+                }
+
+                return t <= 8000 ? QosType.UnreliableOrdered : QosType.Unreliable;
             }
         }
     }
-    
     
     public struct OP_ClientPacket
     {
